@@ -53,6 +53,7 @@ def update_name(name, mapping):
     name = name.split(' ')
     for i in range(len(name)):
         if name[i] in mapping:
+            print(name[i], ' => ', mapping[name[i]])
             name[i] = mapping[name[i]]
             name[i] = string_case(name[i])
         else:
