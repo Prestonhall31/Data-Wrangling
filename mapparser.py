@@ -14,6 +14,7 @@ import pprint
 
 OSMFILE = "Beaverton.osm"
 
+# Counts the unique amount of tags in the file
 def count_tags(filename):
     tags = {}
     for event, elem in ET.iterparse(filename):

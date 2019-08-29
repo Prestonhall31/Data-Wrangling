@@ -28,6 +28,7 @@ def is_street_name(elem):
     return (elem.attrib['k'] == "addr:street")
 
 
+# Iterates through the Street values and returns the words that are not in the expected list
 def audit(osmfile):
     osm_file = open(osmfile, "r")
     street_types = defaultdict(set)

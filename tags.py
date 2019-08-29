@@ -29,7 +29,7 @@ def key_type(element, keys):
                 
     return keys
 
-
+# Counts the different tags in the file. 
 def process_map(filename):
     keys = {"lower": 0, "lower_colon": 0, "problemchars": 0, "other": 0}
     for _, element in ET.iterparse(filename):
