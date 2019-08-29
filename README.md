@@ -18,13 +18,9 @@ This notebook is my project 'Wrangle OpenStreetMap Data' submission. 'Data wrang
 
 Beaverton, OR, United States
 
-- 
-
 This map is of where I currently live. This is a fairly new area for me so I’m more interested to see what database querying reveals, and I’d like an opportunity to contribute to its improvement on [OpenStreetMap.org](https://www.openstreetmap.org/search?query=Beaverton%2C%20or#map=12/45.4848/-122.8055).
 
 # Understanding the data
-
-## Mapparser.py
 
 I wanted to know what type of data I would be working with. Running the script [mapparser.py](https://github.com/Prestonhall31/Data-Wrangling/blob/master/mapparser.py) creates a dictionary with different elements and the number of occurences within the dataset that I will be working with. 
 
@@ -71,11 +67,11 @@ Using regular expressions, street names' endings and beginnings were audited wit
 
 ## Data Cleaning
 
-In this step, by running the [data.py script](https://github.com/Prestonhall31/Data-Wrangling/blob/master/data.py), the problems encountered in the map were cleaned and data was converted from XML to CSV format. The data is transformed from document format to tabular format which makes it possible to write the data to .csv files. 
+In this step, by running the [data.py](https://github.com/Prestonhall31/Data-Wrangling/blob/master/data.py) scrypt, the problems encountered in the map were cleaned and data was converted from XML to CSV format. The data is transformed from document format to tabular format which makes it possible to write the data to .csv files. 
 
 ## Importing to database
 
-Finally, using the [createdb.py](https://github.com/Prestonhall31/Data-Wrangling/blob/master/createdb.py). file, the cleaned .csv files were imported into a SQL database using a given schema. The osm.db database has five tables: 
+Finally, using the [createdb.py](https://github.com/Prestonhall31/Data-Wrangling/blob/master/createdb.py) file, the cleaned .csv files were imported into a SQL database using a given schema. The osm.db database has five tables: 
 - nodes 
 - nodes_tags
 - ways
@@ -85,7 +81,7 @@ Finally, using the [createdb.py](https://github.com/Prestonhall31/Data-Wrangling
 ### Inspecting cities
 I wanted to work within the city of Beaverton. So it is worth checking if there are other cities thatare being included. 
 
-```*.sql
+```sql
 SELECT tags.value, COUNT(*) as count 
 FROM (SELECT * FROM nodes_tags UNION ALL 
       SELECT * FROM ways_tags) tags
@@ -103,7 +99,7 @@ Beaverton, OR|13
 
 More than have of the values are not Beaverton, and 13 that are labeled incorrectly as Beaverton, OR. These will need to be removed.
 
-```*.sql
+```sql
 DELETE FROM nodes_tags WHERE key = 'city' and value != 'Beaverton';
 DELETE FROM ways_tags WHERE key = 'city' and value != 'Beaverton';
 ```
@@ -112,7 +108,8 @@ DELETE FROM ways_tags WHERE key = 'city' and value != 'Beaverton';
 
 ### File sizes
 ```
-Beaverton.osm ............... 85.3 MB  
+Beaverton.osm ............... 85.3 MB 
+small-sample.osm............. 1.1 MB
 osm.db ...................... 47.1 MB  
 nodes.csv ................... 33.7 MB  
 nodes_tags.csv .............. 521 KB  
@@ -122,7 +119,7 @@ ways_tag.csv ................ 2.9 MB
 ```
 
 ### Number of nodes
-```*.sql
+```sql
 SELECT COUNT(*) FROM nodes;
 ```
 ```
@@ -132,7 +129,7 @@ SELECT COUNT(*) FROM nodes;
 
 
 ### Number of ways
-```*.sql 
+```sql 
 SELECT COUNT(*) FROM ways;
 
 ```
@@ -142,7 +139,7 @@ SELECT COUNT(*) FROM ways;
 
 
 ### Number of unique users 
-```*.sql 
+```sql 
 SELECT COUNT(DISTINCT(e.uid))          
 FROM (SELECT uid FROM nodes UNION ALL SELECT uid FROM ways) e;
 ```
@@ -152,7 +149,7 @@ FROM (SELECT uid FROM nodes UNION ALL SELECT uid FROM ways) e;
 
 
 ### Top 10 contributing users
-```*.sql 
+```sql 
 SELECT e.user, COUNT(*) as num
 FROM (SELECT user FROM nodes UNION ALL SELECT user FROM ways) e
 GROUP BY e.user
@@ -174,7 +171,7 @@ Brett_Ham|2944
 
 ### Number of users appearing only once (having 1 post)
 
-```*.sql 
+```sql 
 SELECT COUNT(*) 
 FROM
     (SELECT e.user, COUNT(*) as num
@@ -188,7 +185,7 @@ FROM
 
 ### Biggest religions
 
-```*.sql 
+```sql 
 SELECT ways_tags.value, COUNT(*) as num
 FROM ways_tags
     JOIN (SELECT DISTINCT(id) FROM ways_tags WHERE value='place_of_worship') a
@@ -206,7 +203,7 @@ spiritualist|1
 ### Christian denominations
 
 
-```*.sql 
+```sql 
 SELECT b.value, COUNT(*) as num
 FROM ways_tags
     JOIN (SELECT DISTINCT(id) FROM ways_tags WHERE value='place_of_worship') a
@@ -233,7 +230,7 @@ unity|1
 
 ### Most popular cuisines
 
-```*.sql 
+```sql 
 SELECT nodes_tags.value, COUNT(*) as num
 FROM nodes_tags 
     JOIN (SELECT DISTINCT(id) FROM nodes_tags WHERE value='restaurant') i
