@@ -13591,7 +13591,7 @@ id,key,value,type
 5892430673,housenumber,19665,addr
 5892430673,postcode,97003,addr
 5892430673,state,OR,addr
-5892430673,street,SW Tualatin Valley Hwy,addr
+5892430673,street,SW Tualatin Valley Highway,addr
 5892430673,unit,#A2,addr
 5892430673,facebook,https://www.facebook.com/Carpenter-Chiropractic-Clinic-270382699674008/,regular
 5892430673,healthcare,alternative,regular
