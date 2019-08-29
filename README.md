@@ -71,11 +71,16 @@ Using regular expressions, street names' endings and beginnings were audited wit
 
 ## Data Cleaning
 
-In this step, by running the [data.py script](https://github.com/Prestonhall31/Data-Wrangling/blob/master/data.py), the problems encountered in the map were cleaned and data was converted from XML to CSV format. The data is transformed from document format to tabular format which makes it possible to write the data to .csv files. The data is then imported to a SQL database as osm.db using the script [createdb.py](https://github.com/Prestonhall31/Data-Wrangling/blob/master/createdb.py).
+In this step, by running the [data.py script](https://github.com/Prestonhall31/Data-Wrangling/blob/master/data.py), the problems encountered in the map were cleaned and data was converted from XML to CSV format. The data is transformed from document format to tabular format which makes it possible to write the data to .csv files. 
 
 ## Importing to database
 
-Finally, using the createdb.py file, the cleaned .csv files were imported into a SQL database using a given schema. The osm.db database has five tables: nodes, nodes_tags, ways, ways_tags and ways_nodes.
+Finally, using the [createdb.py](https://github.com/Prestonhall31/Data-Wrangling/blob/master/createdb.py). file, the cleaned .csv files were imported into a SQL database using a given schema. The osm.db database has five tables: 
+- nodes 
+- nodes_tags
+- ways
+- ways_tags
+- ways_nodes
 
 ### Inspecting cities
 I wanted to work within the city of Beaverton. So it is worth checking if there are other cities thatare being included. 
@@ -118,7 +123,7 @@ ways_tag.csv ................ 2.9 MB
 
 ### Number of nodes
 ```*.sql
-sqlite> SELECT COUNT(*) FROM nodes;
+SELECT COUNT(*) FROM nodes;
 ```
 ```
 352195
