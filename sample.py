@@ -3,7 +3,7 @@ import xml.etree.ElementTree as ET  # Use cElementTree or lxml if too slow
 OSM_FILE = "Beaverton.osm"  # Replace this with your osm file
 SAMPLE_FILE = "small-sample.osm"
 
-k = 80 # Parameter: take every k-th top level element
+k = 10 # Parameter: take every k-th top level element
 
 def get_element(osm_file, tags=('node', 'way', 'relation')):
     """Yield element if it is the right type of tag
@@ -17,7 +17,7 @@ def get_element(osm_file, tags=('node', 'way', 'relation')):
             yield elem
             root.clear()
 
-# Writes every 80th level element in the file. 
+# Writes every 10th level element in the file. 
 with open(SAMPLE_FILE, 'wb') as output:
     output.write('<?xml version="1.0" encoding="UTF-8"?>\n')
     output.write('<osm>\n  ')

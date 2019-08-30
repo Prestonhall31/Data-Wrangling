@@ -18,7 +18,7 @@ import cerberus
 
 import schema
 
-OSMFILE = "Beaverton.osm"
+OSM_PATH = "Beaverton.osm"
 
 NODES_PATH = "nodes.csv"
 NODE_TAGS_PATH = "nodes_tags.csv"
@@ -28,6 +28,7 @@ WAY_TAGS_PATH = "ways_tags.csv"
 
 LOWER_COLON = re.compile(r'^([a-z]|_)+:([a-z]|_)+')
 PROBLEMCHARS = re.compile(r'[=\+/&<>;\'"\?%#$@\,\. \t\r\n]')
+street_type_re = re.compile(r'\b\S+\.?$', re.IGNORECASE)
 
 SCHEMA = schema.schema
 
@@ -37,6 +38,16 @@ NODE_TAGS_FIELDS = ['id', 'key', 'value', 'type']
 WAY_FIELDS = ['id', 'user', 'uid', 'version', 'changeset', 'timestamp']
 WAY_TAGS_FIELDS = ['id', 'key', 'value', 'type']
 WAY_NODES_FIELDS = ['id', 'node_id', 'position']
+
+expected = ["Street", "Avenue", "Boulevard", "Drive", "Court", "Place", "Square", "Lane", "Road", 
+            "Trail", "Parkway", "Commons"]
+
+mapping = { "Ave": "Avenue", "Ave.": "Avenue", "avenue": "Avenue", "ave": "Avenue", "Blvd": "Boulevard", 
+        "Blvd.": "Boulevard", "Blvd,": "Boulevard", "Boulavard": "Boulevard", "Boulvard": "Boulevard", 
+        "Ct": "Court", "Dr": "Drive", "Dr.": "Drive", "Hwy": "Highway", "Ln": "Lane", "Ln.": "Lane", 
+        "Pl": "Place", "Plz": "Plaza", "Rd": "Road", "Rd.": "Road", "St": "Street", "St.": "Street", 
+        "st": "Street", "street": "Street", "square": "Square", "parkway": "Parkway"}
+
 
 
 def shape_element(element, node_attr_fields=NODE_FIELDS, way_attr_fields=WAY_FIELDS,
@@ -48,7 +59,47 @@ def shape_element(element, node_attr_fields=NODE_FIELDS, way_attr_fields=WAY_FIE
     way_nodes = []
     tags = []  # Handle secondary tags the same way for both node and way elements
 
-    # YOUR CODE HERE
+    
+    ######################################
+    # This function checks the elem variable and returns if it is a street.
+    def is_street_name(elem):
+        '''
+        Verifies the correct key is pulled for updating
+        '''
+        return (elem.attrib['k'] == "addr:street")
+        
+    # 
+
+    def update(name, mapping):
+        '''
+        This function takes the name and compares it to the mapping list. 
+        If the name is in mapping, then it will return its value. 
+        Args:
+            name(string): this value is the tag.attrib['v] in the file. 
+            mapping(dictionary): Mapping dictionary, corrects any errors.
+                                i.e. 'Ave.' => 'Avenue'
+        Returns:
+            string: String that will be assigned to tag.attrib['v]
+        '''
+        name = name.split(' ')
+        for i in range(len(name)):
+            if name[i] in mapping:
+                #print(name[i])
+                name[i] = mapping[name[i]]
+                #print(name[i])
+        name = ' '.join(name)
+        return name
+        
+    # This will loop through the OSM file and pull the address key and value. 
+    # It then runs the update function to update the value to an approved street name.
+    for event, elem in ET.iterparse(OSM_PATH, events=("start",)):
+        if elem.tag == "node" or elem.tag == "way":
+            for tag in elem.iter("tag"):
+                if is_street_name(tag):
+                    update(tag.attrib['v'], mapping)
+    
+    
+    ######################################
     if element.tag == 'node':
         for attrib in element.attrib:
             if attrib in NODE_FIELDS:
@@ -72,7 +123,7 @@ def shape_element(element, node_attr_fields=NODE_FIELDS, way_attr_fields=WAY_FIE
                 tags.append(node_tag)
         
         return {'node': node_attribs, 'node_tags': tags}
-        
+
     elif element.tag == 'way':
         for attrib in element.attrib:
             if attrib in WAY_FIELDS:
@@ -90,7 +141,7 @@ def shape_element(element, node_attr_fields=NODE_FIELDS, way_attr_fields=WAY_FIE
                     way_tag['id'] = element.attrib['id']
                     way_tag['value'] = child.attrib['v']
                     tags.append(way_tag)
-                elif PROBLEMCHARS.match(child.attrib['k']):
+                elif problem_chars.match(child.attrib['k']):
                     continue
                 else:
                     way_tag['type'] = 'regular'
@@ -189,4 +240,4 @@ def process_map(file_in, validate):
 
 
 if __name__ == '__main__':
-    process_map(OSMFILE, validate=True)
+    process_map(OSM_PATH, validate=True)

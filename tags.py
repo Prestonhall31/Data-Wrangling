@@ -14,7 +14,18 @@ problemchars = re.compile(r'[=\+/&<>;\'"\?%#$@\,\. \t\r\n]')
 
 OSMFILE = "Beaverton.osm"
 
+# 
 def key_type(element, keys):
+    '''
+    This function utilizes regex to pull all the tags in the file and 
+    count the occurences of types of tags to estimate how many different 
+    types of tags there are and how many potectial problems there could be
+    Args:
+        element(string): element in the file. 
+        keys(dictionary): Dictionary used to keep count of elements.
+    Returns:
+        Dictionary: the keys
+    '''
     if element.tag == "tag":
         for tag in element.iter('tag'):
             k = tag.get('k')

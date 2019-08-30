@@ -3,22 +3,13 @@ import csv
 from pprint import pprint
 
 
-
-# reference: https://discussions.udacity.com/t/creating-db-file-from-csv-files-with-non-ascii-unicode-characters/174958/7
-
-
-# 1. since database does not yet exist it will be created
+# Following sqlite3 documentation, we need to assign the file to a variable, then create a cursor object. 
 sqlite_file = 'osm.db'
-
-# 2. Connect to the database
 conn = sqlite3.connect(sqlite_file)
-
-# 3. Get a cursor object
 cur = conn.cursor()
 
 
-# 4. create the table nodes_tags
-# but first drop if it already exists
+# This creates the tables but first drop (delete) if it already exists
 
 cur.execute(''' DROP TABLE IF EXISTS nodes_tags''')
 conn.commit()
@@ -95,15 +86,12 @@ CREATE TABLE ways_nodes (
 conn.commit()
 
 
-# 5. read in the data
-# read in the csv file as a dictionary, format the
-# data as a list of tubles:
-
+# Read in the csv file as a dictionary, format the data as a list of tubles:
 with open('nodes_tags.csv', 'r') as fin:
 	dr = csv.DictReader(fin) # comma is the default delimiter
 	to_db = [(i['id'], i['key'], i['value'], i['type']) for i in dr]
 
-# 6. insert the formatted data
+# Insert the formatted data
 
 cur.executemany('INSERT INTO nodes_tags(id, key, value,type) VALUES (?, ?, ?, ?);', to_db)
 # commit the changes
@@ -146,13 +134,13 @@ cur.executemany('INSERT INTO ways_nodes(id, node_id, position) VALUES (?, ?, ?);
 conn.commit()
 
 
-# 7. check that the data imported correctly
+# Check that the data imported correctly
 
 cur.execute("SELECT COUNT(id), value FROM nodes_tags WHERE key = 'city' ")
 all_rows = cur.fetchall()
 print('1):')
 pprint(all_rows)
 
-# 8 close the connection
+# Close the connection
 
 conn.close()
