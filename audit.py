@@ -108,35 +108,5 @@ def audit(osmfile):
     return phone_types, street_type_count, street_types, bad_postcodes
 
 
-
 if __name__ == "__main__":
     pprint.pprint(audit(OSMFILE))
-
-'''
-# perform all of the above audits on the file
-
-def audit(osmfile):
-    osm_file = open(osmfile, "r")
-
-    phone_types = set()
-    bad_postcodes = defaultdict(int)
-    street_type_count = defaultdict(int)
-    street_types = defaultdict(set)
-    
-    for event, elem in ET.iterparse(osm_file, events=("start",)):
-
-        if elem.tag == "node" or elem.tag == "way":
-            for tag in elem.iter("tag"):
-                if is_street_name(tag):
-                	count_street_type(street_type_count, tag.attrib['v'])
-                	group_street_type(street_types, tag.attrib['v'])
-                if is_phone_number(tag):
-                	audit_phone(phone_types,tag.attrib['v'])
-                if is_postcode(tag):
-                	audit_postcode(bad_postcodes, tag.attrib['v'])
-    osm_file.close()
-
-    street_type_count = sort_values(street_type_count)
-
-    return phone_types, street_type_count, street_types, bad_postcodes
-'''
